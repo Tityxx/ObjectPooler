@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Zenject;
 
 namespace ToolsAndMechanics.ObjectPool
 {
@@ -19,6 +20,9 @@ namespace ToolsAndMechanics.ObjectPool
 
         [SerializeField]
         private PoolableObjectData[] dataList;
+
+        [Inject]
+        private DiContainer container;
 
         private Dictionary<PoolableObjectData, Queue<GameObject>> queue = new Dictionary<PoolableObjectData, Queue<GameObject>>();
 
@@ -38,7 +42,7 @@ namespace ToolsAndMechanics.ObjectPool
                 queue.Add(data, new Queue<GameObject>());
                 for (int i = 0; i < data.InitCount; i++)
                 {
-                    GameObject go = Instantiate(data.Prefab);
+                    GameObject go = container.InstantiatePrefab(data.Prefab);
                     go.SetActive(false);
 
                     AddPoolInformation(go, data);
@@ -71,7 +75,7 @@ namespace ToolsAndMechanics.ObjectPool
             }
             else
             {
-                go = Instantiate(data.Prefab);
+                go = container.InstantiatePrefab(data.Prefab);
                 AddPoolInformation(go, data);
             }
             go.transform.position = position;
